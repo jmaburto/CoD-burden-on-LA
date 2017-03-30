@@ -1,0 +1,11 @@
+name: CoD_App
+title: CoD_App
+account: jmaburto
+server: shinyapps.io
+appId: 168088
+bundleId: 770047
+url: https://jmaburto.shinyapps.io/CoD_App/
+when: 1490860477.09881
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: CoD_Shiny_app.R
