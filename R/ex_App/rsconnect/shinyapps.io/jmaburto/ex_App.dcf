@@ -1,0 +1,11 @@
+name: ex_App
+title: ex_App
+account: jmaburto
+server: shinyapps.io
+appId: 177539
+bundleId: 816280
+url: https://jmaburto.shinyapps.io/ex_App/
+when: 1493987607.34749
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: ex_Shiny_app.R

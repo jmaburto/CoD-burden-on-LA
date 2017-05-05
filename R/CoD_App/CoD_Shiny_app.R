@@ -25,6 +25,7 @@ names.c <- unique(Deaths2$X2)
 CoD <- function(data,vline.data,name){
   ggplot(Deaths2[Deaths2$X2 == name], aes(Year,Proportion))+
     geom_line(aes(colour = Sex), lwd=1)+
+    geom_point(aes(colour = Sex), lwd=1)+
     facet_wrap(~Cause2,scales = "free",ncol = 4)+
     geom_vline(data=vline.data[vline.data$Country==name], aes(xintercept=ICD10.Year), colour="blue", lty=2 )
 }
