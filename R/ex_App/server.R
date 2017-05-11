@@ -2,10 +2,6 @@
 # You'll need these packages to make things work, more from modern programming
 #install.packages(c("dplyr", "tidyr", "ggplot2", "shiny",'rsconnect'), dependencies=TRUE)
 
-# rsconnect::setAccountInfo(name='jmaburto',
-#                           token='7310E08D0D081D3C3CABCAA90D18045E',
-#                           secret='Vzlie6RN39/THGhWKatGf/C68yZp+RENdTdOl/ey')
-
 # get proportion data
 #setwd("C:/Users/jmaburto/Desktop/World Bank 2017/R/CoD_App")
 #source('R/3_Proportions.R')

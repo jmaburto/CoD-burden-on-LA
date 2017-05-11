@@ -1,0 +1,11 @@
+name: ex_App
+title: ex_App
+account: wb-lac
+server: shinyapps.io
+appId: 178192
+bundleId: 816304
+url: https://wb-lac.shinyapps.io/ex_App/
+when: 1493988572.10443
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: ex_Shiny_app.R
