@@ -1,0 +1,11 @@
+name: Decomp_App
+title: Decomp_App
+account: wb-lac
+server: shinyapps.io
+appId: 183916
+bundleId: 843341
+url: https://wb-lac.shinyapps.io/Decomp_App/
+when: 1495959271.34882
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: Decomp_Shiny_app.R

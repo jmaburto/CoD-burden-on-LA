@@ -4,16 +4,16 @@
 
 # Classification of causes of death
 # 1 total deaths
-# 2 Certain infectious and parasitic diseases                           A00-B99
-# 3 Neoplasms                                                      C00-D48
-# 4 Diseases of the circulatory system                        I00-I99
+# 2 Certain infectious and parasitic diseases     A00-B99
+# 3 Neoplasms                                     C00-D48
+# 4 Diseases of the circulatory system            I00-I99
 # 5 Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified                                                                             R00-R99
 # 6 Mental and behavioural disorders F01-F99
 # 7 Diseases of the nervous system            G00-G98
-# 8 Endocrine, nutritional and metabolic diseases                 E00-E88 
+# 8 Endocrine, nutritional and metabolic diseases     E00-E88 
 # 9 Diseases of the digestive system K00-K92  
 # 10 Diseases of the genitourinary system               N00-N98
-# 11 P00-P96          Certain conditions originating in the perinatal period & Q00-Q99                Congenital malformations, deformations and chromosomal abnormalities
+# 11 P00-P96          Certain conditions originating in the perinatal period & Q00-Q99    Congenital malformations, deformations and chromosomal abnormalities
 # 12 Diseases of the respiratory system    J00-J98
 # 13 External causes of morbidity and mortality     V01-Y89 minus homicide
 # 14 X85-Y09 Assault - homicide
@@ -23,7 +23,7 @@ library(data.table)
 library(reshape2)
 library(latticeExtra)
 
-setwd("C:/Users/jmaburto/Desktop/World Bank 2017/")
+setwd('C:/Users/jmaburto/Documents/GitHub/CoD-burden-on-LA')
 
 source('R/1_Get_All_Data.R')
 
@@ -41,8 +41,10 @@ Cat.15.s$Male  <- Cat.15[,list(Male =sum(Male)), by = list(X,Year)]$Male
 # For all the cuntries, there is no informatino on catefory 15, so of course there is a rupture.
 
 # A dataset without cause = 1, total. Makes no difference, but just be sure
-Deaths.age       <- Deaths.data[Deaths.data$Age2 < 97,]
 
+Deaths.age       <- Deaths.data[Deaths.data$Age2 < 97,]
+unique(Deaths.age$Age2)
+unique(Deaths.age$Cause)
 # get proportions for males and females
 
 # Sum over ages to get totals by cause 
@@ -111,8 +113,6 @@ dev.off()
 
 
 
-Deaths$Cause2 <- Deaths$Cause
-Deaths$Cause2 <- factor(Deaths$Cause2, levels = 1:15, labels = cause.name.vec)
 
 
 
@@ -145,6 +145,8 @@ for (i in Country.code.vec){
 dev.off()
 
 
+Deaths$Cause2 <- Deaths$Cause
+Deaths$Cause2 <- factor(Deaths$Cause2, levels = 1:15, labels = cause.name.vec)
 Deaths  <- Deaths[Deaths$Cause != 1,c("X","X2","Year","Cause","Cause2","Female","Male","Female.p","Male.p")]
 Deaths2 <- melt.data.table(Deaths[,-c(8:9)],id.vars =1:5,variable.name = 'Sex',value.name = 'Deaths')
 Deaths3 <- melt.data.table(Deaths[,-c(6:7)],id.vars =1:5,variable.name = 'Sex',value.name = 'Proportions')

@@ -22,7 +22,7 @@
 library(data.table)
 library(reshape2)
 
-setwd("C:/Users/jmaburto/Desktop/World Bank 2017/")
+setwd('C:/Users/jmaburto/Documents/GitHub/CoD-burden-on-LA')
 
 # Create a vector with the countries we are interested in
 Country.name.vec <- c('Cuba','Dominican Republic','Jamaica','Puerto Rico',
@@ -35,7 +35,18 @@ Country.name.vec <- c('Cuba','Dominican Republic','Jamaica','Puerto Rico',
 Country.code.vec <- c(2150,2170,2290,2380,2440,2140,2190,2250,2280,2310,
                        2340,2350,2020,2120,2130,2180,2360,2370,2460,2470,2270,2060,2070)
 
-#i <- 14, brazil code 2070, 
+
+#function to correect cuba subtotals
+Complete.cuba <- function(deaths){
+  s1 <- sum(deaths[2:15])
+  s2 <- deaths[1]
+  deaths2 <- deaths
+  deaths2[15] <- deaths2[15]+(s2-s1)
+  deaths2
+}
+
+
+#i <- 1, brazil code 2070, 
 Deaths.data  <- NULL
 ICD10.year   <- NULL
 # Create a loop to find the year of change between ICD9 and ICD10 and create homogeneous datasets
@@ -77,6 +88,7 @@ for (i in 1:length(Country.code.vec)){
   if ( i == 14) { Deaths <- unique(Deaths, by = colnames(Deaths)[1:4]) }
   
   # Complete ages that have no values of causes of death and fill them with 0
+  print(unique(Deaths$Cause))
   mat.Deaths.f <- dcast(Deaths, Age2 + Cause ~ Year,value.var = 'Female',fill = 0, drop = F)
   mat.Deaths.m <- dcast(Deaths, Age2 + Cause ~ Year,value.var = 'Male',fill = 0, drop = F)
   
@@ -87,6 +99,41 @@ for (i in 1:length(Country.code.vec)){
                        variable.name = 'Year',value.name = 'Male')
   Deaths.f$Year <- as.numeric(as.character(Deaths.f$Year))
   Deaths.m$Year <- as.numeric(as.character(Deaths.m$Year))
+
+  
+  if (i == 1) {Deaths.cuba1 <- data.table(Deaths.f)
+  Deaths.cuba2 <- data.table(Deaths.m)
+    females <- Deaths.cuba1[,Complete.cuba(Female), by = list(Age2,Year)]
+    males   <- Deaths.cuba2[,Complete.cuba(Male), by = list(Age2,Year)]
+  Deaths.f$Female <- females$V1
+  Deaths.m$Male <- males$V1
+  }
+  
+  
+  # correct cuba, there are inconsistencies with subtotals and totals 
+  
+  ###Make sure the category 15 containd the sum 2:14 -1
+  yrs <- unique(Deaths.f$Year)
+  ages <- unique(unique(Deaths.f$Age2))
+  #k <- 0
+  #j <- 1990
+  for (k in ages){
+  for (j in yrs){
+  s1 <- (sum(Deaths.f[Deaths.f$Age2==k & Deaths.f$Year==j,][2:14,4]) + 
+           Deaths.f[Deaths.f$Age2==k & Deaths.f$Year==j,][15,4])
+  
+  s2 <- s1 - Deaths.f[Deaths.f$Age2==k & Deaths.f$Year==j,][1,4]
+  
+  s1.1 <- (sum(Deaths.m[Deaths.m$Age2==k & Deaths.m$Year==j,][2:14,4]) + 
+           Deaths.m[Deaths.m$Age2==k & Deaths.m$Year==j,][15,4])
+  
+  s2.1 <- s1.1 - Deaths.m[Deaths.m$Age2==k & Deaths.f$Year==j,][1,4]
+  
+  if (s2 != 0) print(c(k,s2,j))
+  if (s2.1 != 0) print(c(k,s2.1,j))
+  
+  }}
+  
   
   # add the code and name of the country to the dataset
   Deaths.complete         <- Deaths.f
@@ -117,7 +164,16 @@ ICD10.year            <- data.table(ICD10.year)
 ICD10.year$ICD10.Year <- as.numeric(ICD10.year$ICD10.Year)
 ICD10.year$Code       <- as.numeric(ICD10.year$Code)
 ICD10.year <- ICD10.year[with(ICD10.year, order(Code)),]
+
 gdata:: keep (Deaths.data , ICD10.year,Country.name.vec,Country.code.vec, sure = T)
+
+unique(Deaths.data$Year)
+unique(Deaths.data$Cause)
+Deaths.data[Deaths.data$Cause==15]
+table(Deaths.data$Country,Deaths.data$Cause)
+
+#Not all the countries have a category 15, 
+#we will create a new which is 14-1, so that they sum to the total, follow next R code
 
 #Notes:
 # No information for HAITI (2270) and  BOLIVIA (2060) in VCR's files

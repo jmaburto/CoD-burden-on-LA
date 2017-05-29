@@ -35,6 +35,10 @@ CEPAL2010 <- do.call(rbind,
 
 CEPAL_LT <- data.table(rbind(CEPAL2004,CEPAL2010))
 
+table(CEPAL2004$Country,CEPAL2004$Year)
+unique(CEPAL2004$Edad.Age)
+table(CEPAL2010$Country,CEPAL2010$Year)
+unique(CEPAL2010$Edad.Age)
 # I need to create a reference year variable, the midpoint of the interval
 ini.y             <- as.numeric(substr(CEPAL_LT$Year, 1, 4))
 fin.y             <- as.numeric(substr(CEPAL_LT$Year, 6, 9))
@@ -98,6 +102,9 @@ unique(UN_LT$code)
 gdata::keep(CEPAL_LT,excel.to.R,excel.to.R2,Country.code.vec,Country.name.vec,UN_LT, sure=T)
 
 
+table(UN_LT$Country,UN_LT$Period)
+unique(UN_LT$Age)
+
 # Lambda lifetables  ----------------------------------------------------------
 Lambda_LT         <- read.csv("Data/LAMbDA_LF.csv",header = T,stringsAsFactors = F)
 Lambda_LT         <- data.table(Lambda_LT)
@@ -109,7 +116,11 @@ Lambda_LT$Country <- toupper(Lambda_LT$Country)
 Lambda_LT$code    <- Country.code.vec[as.character(Lambda_LT$Country)]
 Lambda_LT$Source  <- "Lambda"
 
+table(Lambda_LT$Country,Lambda_LT$Year)
+unique(UN_LT$Age)
+
 gdata::keep(CEPAL_LT,excel.to.R,excel.to.R2,Country.code.vec,Country.name.vec,UN_LT,Lambda_LT, sure=T)
+
 
 ### Merge all datasets together
 names.1 <- c('Year','Period','Age','Sex','Country','Code','Source','mx','qx','ex')
@@ -176,7 +187,8 @@ Mex$qx <- as.numeric(Mex$qx)
 
 Data.LT <- rbind(Data.LT,Mex)
 
-
+#load useful function I created to convert excel to dataframes
+source("R/Functions_LT.R")
 
 # Data with life expectancy -----------------------------------------------
 
@@ -185,3 +197,13 @@ ex$Sex <- as.numeric(ex$Sex)
 ex$Sex <- factor(ex$Sex,levels = c(1, 2), labels = c("Males", "Females"))
 ex <- as.data.frame(ex)
 save(ex,file= "R/ex_App/Life_expectancy.RData")
+
+
+# make life expectancy for all the countries in the same way
+Data.LT <- Data.LT[Data.LT$Source != 'SO',]
+Data.LT <- Data.LT[,ex:=e0.from.mx(mx,Age,Sex), by = list(Year,Sex,Country,Source)]
+head(Data.LT)
+
+
+save(Data.LT, file = 'Outcomes/Data_Lifetables.RData')
+

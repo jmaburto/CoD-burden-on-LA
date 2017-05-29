@@ -21,10 +21,13 @@
 
 library(data.table)
 library(reshape2)
+setwd('C:/Users/jmaburto/Documents/GitHub/CoD-burden-on-LA')
 
-setwd("C:/Users/jmaburto/Desktop/World Bank 2017/")
 
 source('R/1_Get_All_Data.R')
+
+# Do not account for cause 15, 
+Deaths.data <- Deaths.data[Deaths.data$Cause != 15,]
 
 ### Now we want to check consistency between the sum of all causes and the total category
 
@@ -57,6 +60,7 @@ New.cat.age       <- Age.Totals2[,1:3,with=F]
 New.cat.age$Cause <- 15
 New.cat.age$Female<- Age.Totals$Female - Age.Totals2$Female
 New.cat.age$Male  <- Age.Totals$Male - Age.Totals2$Male
+
 New.cat.age[New.cat.age$Male < 0 | New.cat.age$Female < 0 ,]
 
 # 22 cases where the sum of 2:14 is larger than the total from the original one by age Cause == 1
@@ -86,3 +90,5 @@ Inconsist$Male      <- Deaths.2[,list(Male=incon(Male)), by = list(X,Year,Age2)]
 Inconsist[Inconsist$Male < 0 | Inconsist$Female < 0 ,]
 
 # excelent, consistent data
+
+### now return the Deaths.data with the new category
