@@ -6,11 +6,13 @@ library(reshape2)
 library(latticeExtra)
 library(XLConnect)
 
-setwd("C:/Users/jmaburto/Documents/GitHub/CoD-burden-on-LA/")
+
+Your_working_directory <- 'C:/Users/jmaburto/Documents/GitHub/CoD-burden-on-LA'
+
+setwd(Your_working_directory)
 
 #load useful function I created to convert excel to dataframes
 source("R/Functions.R")
-
 
 # CEPAL lifetables (2004 & 2010) ------------------------------------------
 # gender, 1 = Male, 2 = Female

@@ -143,4 +143,20 @@ AgeDecomp2<-function(A1,A2){
 }
 
 
+Country.name.vec <- toupper(c('Cuba','Dominican Republic','Jamaica','Puerto Rico',
+                              'Trinidad and Tobago','Costa Rica','El Salvador','Guatemala',
+                              'Honduras','Mexico','Nicaragua','Panama','Argentina',
+                              'Chile','Colombia','Ecuador','Paraguay','Peru','Uruguay','Venezuela',
+                              'Haiti','Bolivia','Brazil', 'Latin America'))
 
+# Create a vector with the countries' codes according to WHO
+Country.code.vec <- c(2150,2170,2290,2380,2440,2140,2190,2250,2280,2310,
+                      2340,2350,2020,2120,2130,2180,2360,2370,2460,2470,2270,2060,2070,9999)
+names(Country.code.vec) <- Country.name.vec
+
+cause.code.vec <- 1:15
+cause.name.vec <- c('Total', 'Infectious','Neoplasms', 'Circulatory','Abnormal', 'Mental',
+                    'Nervous','Endocrine','Digestive',
+                    'Genitourinary','Perinatal','Respiratory','External','Homicide','Rest')
+
+names(cause.code.vec) <- cause.name.vec

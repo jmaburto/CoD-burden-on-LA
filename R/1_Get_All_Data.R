@@ -17,12 +17,15 @@
 # 12 Diseases of the respiratory system    J00-J98
 # 13 External causes of morbidity and mortality     V01-Y89 minus homicide
 # 14 X85-Y09 Assault - homicide
+#Make sure to install packages needed:data.table, reshape2, ggplot, shiny, DT, latticeExtra,gdata,XLConnect,etc.
 
+# put all the folders in one and set your working directory to this master folder
+Your_working_directory <- 'C:/Users/jmaburto/Documents/GitHub/CoD-burden-on-LA'
 
 library(data.table)
 library(reshape2)
 
-setwd('C:/Users/jmaburto/Documents/GitHub/CoD-burden-on-LA')
+setwd(Your_working_directory)
 
 # Create a vector with the countries we are interested in
 Country.name.vec <- c('Cuba','Dominican Republic','Jamaica','Puerto Rico',
@@ -36,7 +39,7 @@ Country.code.vec <- c(2150,2170,2290,2380,2440,2140,2190,2250,2280,2310,
                        2340,2350,2020,2120,2130,2180,2360,2370,2460,2470,2270,2060,2070)
 
 
-#function to correect cuba subtotals
+#function to correct cuba subtotals
 Complete.cuba <- function(deaths){
   s1 <- sum(deaths[2:15])
   s2 <- deaths[1]
@@ -45,8 +48,6 @@ Complete.cuba <- function(deaths){
   deaths2
 }
 
-
-#i <- 1, brazil code 2070, 
 Deaths.data  <- NULL
 ICD10.year   <- NULL
 # Create a loop to find the year of change between ICD9 and ICD10 and create homogeneous datasets
@@ -167,17 +168,3 @@ ICD10.year <- ICD10.year[with(ICD10.year, order(Code)),]
 
 gdata:: keep (Deaths.data , ICD10.year,Country.name.vec,Country.code.vec, sure = T)
 
-unique(Deaths.data$Year)
-unique(Deaths.data$Cause)
-Deaths.data[Deaths.data$Cause==15]
-table(Deaths.data$Country,Deaths.data$Cause)
-
-#Not all the countries have a category 15, 
-#we will create a new which is 14-1, so that they sum to the total, follow next R code
-
-#Notes:
-# No information for HAITI (2270) and  BOLIVIA (2060) in VCR's files
-# Cuba has a year == 0, restrict to values > 0
-# In some ages, there are not 14 categories, these should be added and fill with zeros
-# Brazil has some duplicated rows, I think is worth to check the root file, since there are large differences.
-# Peru also has a year 0 in ICD10.data

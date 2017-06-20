@@ -101,14 +101,14 @@ text.1 <- paste(paste('Period 1:',Period1,'|','Life expectancy:',e01),'\n',
 
    
    ### Save_results in csv files
-   
-   xyz <- unique(Decomp.results$Country)
+   Decomp_results <- data.frame(Decomp_results)
+   xyz <- unique(Decomp_results$Country)
    #i <- xyz[1]
    for (i in xyz){
-     D1 <- Decomp.results[Decomp.results$Country==xyz,]
+     D1 <- Decomp_results[Decomp_results$Country==xyz,]
      write.csv(D1,file = paste0('Outcomes/Main Results/Decomp_Results_',as.character(i),'.csv'))
      
      D2 <- Lifetables[Lifetables$Country==i,]
      write.csv(D1,file = paste0('Outcomes/Main Results/Lifetables_',as.character(i),'.csv'))
    }
-   
+   warnings()

@@ -1,169 +1,284 @@
-
-###############################################################################
-### Program to create homogeneous datasets with all countries                 #
-###############################################################################
-
-# Classification of causes of death
-# 1 total deaths
-# 2 Certain infectious and parasitic diseases                           A00-B99
-# 3 Neoplasms                                                      C00-D48
-# 4 Diseases of the circulatory system                        I00-I99
-# 5 Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified                                                                             R00-R99
-# 6 Mental and behavioural disorders F01-F99
-# 7 Diseases of the nervous system            G00-G98
-# 8 Endocrine, nutritional and metabolic diseases                 E00-E88 
-# 9 Diseases of the digestive system K00-K92
-# 10 Diseases of the genitourinary system               N00-N98
-# 11 P00-P96          Certain conditions originating in the perinatal period & Q00-Q99                Congenital malformations, deformations and chromosomal abnormalities
-# 12 Diseases of the respiratory system    J00-J98
-# 13 External causes of morbidity and mortality     V01-Y89 minus homicide
-# 14 X85-Y09 Assault - homicide
-
-
 library(data.table)
 library(reshape2)
 
-setwd('C:/Users/jmaburto/Documents/GitHub/CoD-burden-on-LA')
-source('R/7_1Europe.R')
+setwd('C:/Users/jmaburto/Documents/GitHub Backup 2/CoD-burden-on-LA')
+#source('R/7_1Europe.R')
 
-cause.name.vec <- c('Total', 'Infectious','Neoplasms', 'Circulatory','Abnormal', 'Mental',
-                    'Nervous','Endocrine','Digestive',
-                    'Genitourinary','Perinatal','Respiratory','External','Homicide','Rest')
+load('Data/Europe_Data.RData')
 
 
-Deaths.data <- Deaths.data[Deaths.data$Age < 96,]
-Deaths.data$Age3<- Deaths.data$Age2
-Deaths.data[Deaths.data$Age2 >= 1 & Deaths.data$Age2 <= 4]$Age3 <- 1
-CoD.data       <- Deaths.data[,list(Female =sum(Female)), by = list(X,Country,Year,Cause,Age3)]
-CoD.data$Male  <- Deaths.data[,list(Male =sum(Male)), by = list(X,Country,Year,Cause,Age3)]$Male
-### Exclude ages 96 and 97, UNK and total
-
-# ###Get HMD Data
-# library(HMDHFDplus)
-# XYZ <- getHMDcountries()
-# XYZ <-c('AUS','BEL','DNK','FIN','FRATNP','DEUTNP','GRC','IRL','ITA','LUX','NLD','PRT','ESP','SWE','GBR_NP')
-# 
-# us <- "HMD_User"
-# pw <- "Password"
-# HMDL <- do.call(rbind,lapply(XYZ, function(x, us, pw){
-#   cat(x,"\n")
-#   Males        <- readHMDweb(x,"mltper_5x5",username=us,password=pw,)
-#   Females      <- readHMDweb(x,"fltper_5x5",username=us,password=pw)
-#   Males$Sex    <- "m"
-#   Females$Sex  <- "f"
-#   CTRY         <- rbind(Females, Males)
-#   CTRY$PopName <- x
-#   CTRY    
-# }, us = us, pw = pw))
-# 
-# HMDL <- data.table(HMDL)
-# HMDL <- HMDL[HMDL$Year >= 1990,]
-#save(HMDL,file = 'Data/HMD.RData')
-
-load('Data/HMD.RData')
-
-
-### group causes of death by 5 years, 1990-1994, 1995-199-, etc.
-CoD.data$Period <-  cut(CoD.data$Year,breaks = rev(c(1989,1994,1999,2004,2009,2014)),
-                        labels = c('1990','1995','2000','2005','2010'))
-
-CoD.data$Period <- as.numeric(as.character(CoD.data$Period))
+### group causes of death by 2010-2015 or +
+CoD.data        <- Deaths.data
+unique(CoD.data$Year)
+CoD.data$Period <-  2010
 CoD.data$Period2 <- CoD.data$Period
-CoD.data$Period2 <- factor(CoD.data$Period2,levels=seq(1990,2010,5),labels=c('1990-1994','1995-1999','2000-2004','2005-2009','2010-2014'))
+CoD.data$Period2 <- factor(CoD.data$Period2,levels=2010,labels=c('2010-2015'))
 
-
-
-CoD.data2      <- CoD.data[, list(Female=sum(Female)),by= list(X,Country,Cause,Age3,Period,Period2)]
-CoD.data2$Male <- CoD.data[, list(Male=sum(Male)),by= list(X,Country,Cause,Age3,Period,Period2)]$Male
+CoD.data2      <- CoD.data[, list(Female=sum(Female)),by= list(X,Cause,Age,Country,Age2,Period2)]
+CoD.data2$Male <- CoD.data[, list(Male=sum(Male)),by= list(X,Cause,Age,Country,Age2,Period2)]$Male
 
 ### Add code to HMD to have comparable datasets by country
-Country.code.vec <- c(4010,4020,4050,4070,4080,4085,4140,4170,4180,4190,4210,4240,4280,4290,4308)
-Country.code.vec2 <- c(4010,4020,4050,4070,4080,4085,4140,4170,4180,4190,4210,4240,4280,4290,4308)
+Country.code.vec <- c(4010,4020,4050,4070,4080,4085,4170,4180,4190,4210,4240,4280,4290,4308,4140)
+Country.code.vec2 <- c(4010,4020,4050,4070,4080,4085,4170,4180,4190,4210,4240,4280,4290,4308,4140)
 
-Country.name.vec <- toupper(c('Austria','Belgium','Denmark','Finland','France','Germany','Greece','Ireland','Italy',
-                              'Luxembourg','Netherlands','Portugal','Spain','Sweden','UK'))
+Country.name.vec <- toupper(c('Austria','Belgium','Denmark','Finland','France','Germany','Ireland','Italy',
+                              'Luxembourg','Netherlands','Portugal','Spain','Sweden','UK','Greece'))
 
-Country.HMD      <- c('AUS','BEL','DNK','FIN','FRATNP','DEUTNP','GRC','IRL','ITA','LUX','NLD','PRT','ESP','SWE','GBR_NP')
+Country.HMD      <- c('AUT','BEL','DNK','FIN','FRATNP','DEUTNP','IRL','ITA','LUX','NLD','PRT','ESP','SWE','GBR_NP','GRC')
 names(Country.code.vec2) <- Country.HMD
 
 HMDL$X <- Country.code.vec2[as.character(HMDL$PopName)]
 
 
-### Now do decompositions
+### Now create a master lifetable for Europe and CoD proportions (remember to add category 15)
 Countries <- unique(HMDL$X)
 Sex       <- c('f','m')
-source('R/Functions_LT.R')
-Europe_decomp <- NULL
 
-#i <- 4020
-for (i in Countries){
-  new.CoD.data <- CoD.data2[CoD.data2$X == i, ]
-  new.HMD      <- HMDL[HMDL$X == i, ]
-  P1 <- unique(new.CoD.data$Period)
-  P2 <- unique(HMDL$Year)
-  
-  for (j in P1[-length(P1)]){
-    for (k in c('f','m')){
-      CoD.data3 <- new.CoD.data[new.CoD.data$Period == j,]
-      CoD.data4 <- new.CoD.data[new.CoD.data$Period == j+5,]
+
+Master_mx.f <- rowMeans(acast(HMDL[HMDL$Sex == 'f'],Age ~ X, value.var = 'mx'),na.rm = T)
+Master_mx.m <- rowMeans(acast(HMDL[HMDL$Sex == 'm'],Age ~ X, value.var = 'mx'),na.rm = T)
+Master_mx.f[19] <- mean(Master_mx.f[19:24],na.rm = T) 
+Master_mx.f <- Master_mx.f[1:19]
+Master_mx.m[19] <- mean(Master_mx.m[19:24],na.rm = T) 
+Master_mx.m <- Master_mx.m[1:19]
+
+### Now a master CoD matrix
+CoD.data3.f <- CoD.data2[,sum(Female),by = list(Cause,Age2)]
+new.cat <- acast(CoD.data3.f, Age2~Cause, value.var = "V1")[,1]-rowSums(acast(CoD.data3.f, Age2~Cause, value.var = "V1")[,2:14])
+Master.CoD.f <- cbind(acast(CoD.data3.f, Age2~Cause, value.var = "V1")[,2:14],new.cat)
+colnames(Master.CoD.f) <- 2:15
+
+CoD.data3.m <- CoD.data2[,sum(Male),by = list(Cause,Age2)]
+new.cat <- acast(CoD.data3.m, Age2~Cause, value.var = "V1")[,1]-rowSums(acast(CoD.data3.m, Age2~Cause, value.var = "V1")[,2:14])
+Master.CoD.m <- cbind(acast(CoD.data3.m, Age2~Cause, value.var = "V1")[,2:14],new.cat)
+colnames(Master.CoD.m) <- 2:15
+
+# now convert to proportions
+t1 <- rowSums(Master.CoD.f)
+t2 <- rowSums(Master.CoD.m)
+Master.CoD.f <- Master.CoD.f/t1
+Master.CoD.m <- Master.CoD.m/t2
+
+#### Now do decomposition
+load("Outcomes/Harmonized_CoDData.RData")
+load('Outcomes/Data_Lifetables.RData')
+
+
+gdata::keep(Rest,Data.LT,Master.CoD.f,Master.CoD.m,Master_mx.f,Master_mx.m,sure=T)
+source('R/Functions_LT.R')
+
+
+Decomp.comparision <- NULL
+
+
+UND <-   Rest[(Rest$X == 2170|Rest$X == 2140|Rest$X == 2190|Rest$X == 2380|Rest$X == 2440|
+                 Rest$X == 2250|Rest$X == 2310|Rest$X == 2340|Rest$X == 2280|Rest$X == 2350|Rest$X == 2290|
+                 Rest$X == 2020|Rest$X == 2120|Rest$X == 2130|
+                 Rest$X == 2180|Rest$X == 2360|Rest$X == 2370|
+                 Rest$X == 2460|Rest$X == 2070|Rest$X == 2470|
+                 Rest$X == 2150),]
+
+UNLT <-            Data.LT[(Data.LT$Code == 2170|Data.LT$Code == 2140|Data.LT$Code == 2190|Data.LT$Code == 2380|Data.LT$Code == 2440|
+                              Data.LT$Code == 2280|Data.LT$Code == 2350|Data.LT$Code == 2290|
+                              Data.LT$Code == 2250|Data.LT$Code == 2310|Data.LT$Code == 2340|
+                              Data.LT$Code == 2020|Data.LT$Code == 2120|Data.LT$Code == 2130|
+                              Data.LT$Code == 2180|Data.LT$Code == 2360|Data.LT$Code == 2370|
+                              Data.LT$Code == 2460|Data.LT$Code == 2070|Data.LT$Code == 2470|
+                              Data.LT$Code == 2150) & Data.LT$Source == 'UN',]
+unique(UND$Country)
+unique(UNLT$Country)
+unique(UNLT$Year)
+unique(UND$Year)
+
+## Aggregate deaths in periods of 5 years to get more robust CoD decomp
+Periods      <- seq(1990,2010,5)
+Period.labels <- unique(UNLT$Period)
+UND$Period5       <- (cut(UND$Year+1, breaks=c(Periods,Inf),labels=Period.labels))
+
+UND2 <- UND[,list(Female=sum(Female)), by = list(X,Cause,Age,Country,Age2,Cause.name,Source,Period5)]
+UND2$Male <- UND[,list(Male=sum(Male)), by = list(X,Cause,Age,Country,Age2,Cause.name,Source,Period5)]$Male
+unique(UND2$Period5)
+
+UND3 <- UND2[UND2$Period5=='2010-2015',]
+
+### Now a master CoD matrix
+CoD.data.LAC.f <- UND3[,sum(Female),by = list(Cause,Age2)]
+Master.CoD.fLAC  <- acast(CoD.data.LAC.f, Age2~Cause, value.var = "V1")
+
+CoD.data.LAC.m <- UND3[,sum(Male),by = list(Cause,Age2)]
+Master.CoD.mLAC  <- acast(CoD.data.LAC.m, Age2~Cause, value.var = "V1")
+
+# now convert to proportions
+t1.LAC <- rowSums(Master.CoD.fLAC)
+t2.LAC <- rowSums(Master.CoD.mLAC)
+Master.CoD.FLAC <- Master.CoD.fLAC/t1.LAC
+Master.CoD.MLAC <- Master.CoD.mLAC/t2.LAC
+
+
+
+### Ok, we can perform decomp for UN
+UNLT$Sex <- as.numeric(UNLT$Sex)
+Sex       <- unique(UNLT$Sex)
+Countries <- unique(UND2$X)
+UND2$Period5 <- as.character(UND2$Period5)
+
+#k <- 2
+#l <-3
+#j <-2280
+#j <-2290
+#j <-2350
+## Because everything is different and we need separate files for each country, I'll do this with loops
+
+for (j in Countries){
+  print(j)
+  for (k in Sex){
+    if (k == 1) sex.col <- 10
+    if (k == 2) sex.col <- 9
+    
+    if (k == 1) Master.mx <- Master_mx.m
+    if (k == 2) Master.mx <- Master_mx.f
+    
+    if (k == 1) Master.CoD <- Master.CoD.m
+    if (k == 2) Master.CoD <- Master.CoD.f
+    # subset data with info requireMethods
+    new.data <- UNLT[UNLT$Code==j & UNLT$Sex==k,]
+    new.CoD  <- UND2[UND2$X==j,]
+    
+    # find out for which periods we have information
+    P1      <- unique(new.data$Period)
+    P2      <- unique(new.CoD$Period5)
+    Periods <- P1
+    if ((length(P2) - length(P1))!= 0) print('Problem')
+    l <- length(Periods)
+    
+    
+      print(l)
+      # get vectors of mx
+      p1.data    <- new.data[new.data$Period == Periods[l],]
       
-      lifetable <- new.HMD[new.HMD$Year == j & new.HMD$Sex == k]
-      lifetable2 <- new.HMD[new.HMD$Year == j+5 & new.HMD$Sex == k]
       
-      ## convert CoD.data in a matrix and add the column that is missing
-      sex.col <- 7
-      if (k=='m') sex.col <- 8
-      M1 <- acast(CoD.data3,Age3~Cause, value.var = colnames(CoD.data3)[sex.col],fill=0,drop=F)
-      M2 <- acast(CoD.data4,Age3~Cause, value.var = colnames(CoD.data3)[sex.col],fill=0,drop=F)
+      # get proportions of causes of death for these periods in matrix format
+      CoD.1    <- new.CoD[new.CoD$Period5 == Periods[l],]
       
-      new1 <- M1[,1]-rowSums(M1[,2:14])
-      new2 <- M2[,1]-rowSums(M2[,2:14])
+      R1 <- acast(CoD.1, Age2 ~ Cause, value.var = colnames(CoD.1)[sex.col],fill = 0,drop = F)
       
-      print(new1[new1 <0])
-      print(new2[new2 <0])
+      if (rowSums(R1)[dim(R1)[1]]==0) R1[dim(R1)[1],dim(R1)[2]] <- 1
       
-      M1 <- cbind(M1[,-1],new1)
-      M2 <- cbind(M2[,-1],new2)
+      if (rowSums(R1)[dim(R1)[1]-1]==0) R1[dim(R1)[1]-1,dim(R1)[2]] <- 1
       
-      M1 <- M1/rowSums(M1)
-      M2 <- M2/rowSums(M2)
-      M1[is.na(M1[,14]),14] <- 1
-      M2[is.na(M2[,14]),14] <- 1
-      M2[is.na(M2)] <- 0
-      M1[is.na(M1)] <- 0
-      colnames(M1) <- 2:15
-      colnames(M2) <- 2:15
+      R1.1 <- R1/rowSums(R1)
       
-      Decomp <- AgeDecomp2(lifetable,lifetable2)
-      Decomp[is.na(Decomp)] <- 0
-      
-      dd  <- length(Decomp)
-      dd2 <- dim(M1)[1]
-      mis <- dd-dd2
-      md <- matrix(c(rep(0,dim(M1)[2]*mis-mis),rep(1,mis)),mis,dim(M1)[2])
-      M1 <- rbind(M1,md)
-      M2 <- rbind(M2,md)
-      rownames(M1) <- lifetable$Age
-      rownames(M2) <- lifetable$Age
-      
-      Decomp.CoD <- Decomp*((M2*lifetable2$mx)-(M1*lifetable$mx))/(lifetable2$mx-lifetable$mx)
+      if (sum(rowSums(R1.1)) != 19) print('Dimension R1')
+      # calculate age decomposition
+      mx1 <- p1.data$mx
+      mx2 <- Master.mx
+      Decomp.age <- AgeDecomp(mx1=mx1,mx2=mx2,Age=p1.data$Age,Sex=k)
+      print(sum(Decomp.age)-(e0.from.mx(mx2,p1.data$Age,k)-e0.from.mx(mx1,p1.data$Age,k)))
+      # calculate cause-specific contributions
+      R2.1 <- Master.CoD
+      Decomp.CoD <- Decomp.age*((R2.1*mx2)-(R1.1*mx1))/(mx2-mx1)
       Decomp.CoD[is.infinite(Decomp.CoD)] <- 0
       Decomp.CoD[is.na(Decomp.CoD)] <- 0
-      print(sum(Decomp.CoD)-sum(Decomp))
-      
-      
-      
+      print(sum(Decomp.CoD)-sum(Decomp.age))
+      # Dataframe with decomposition results
       Results         <- melt(Decomp.CoD,varnames = c('Age','Cause'),value.name = 'Contribution')
-      Results$Period1 <- j
-      Results$Period2 <- j+5
+      Results$Period1 <- Periods[l]
+      Results$Age     <- rep(p1.data$Age,14)
       Results$Sex     <- k
-      Results$Country <- i
-      Results$Country.name <- CoD.data3$Country[1]
-      Results$e01     <- lifetable$ex[1]
-      Results$e02     <- lifetable2$ex[1]
-      Europe_decomp  <- rbind(Europe_decomp,Results)
+      Results$Country <- j
+      Results$Sources <- 'UN'
+      Results$e01     <- e0.from.mx(mx = mx1,Ages=p1.data$Age,Sex=k)
+      Results$e02     <- e0.from.mx(mx = mx2,Ages=p1.data$Age,Sex=k)
+      Decomp.comparision  <- rbind(Decomp.comparision,Results)
       }
-  }
 }
 
-save(Europe_decomp, file = 'Outcomes/Europe_decomp.RData')
+Results <- NULL
+for (k in Sex){
+  if (k == 1) Master.mx <- Master_mx.m
+  if (k == 2) Master.mx <- Master_mx.f
+  
+  if (k == 1) Master.CoD <- Master.CoD.m
+  if (k == 2) Master.CoD <- Master.CoD.f
+  
+  if (k == 1) Master.mx.LAC <- Data.LT[Data.LT$Country=='LATIN AMERICA' & Data.LT$Source=='UN' &
+                                         Data.LT$Sex =='1' & Data.LT$Period=='2010-2015']
+  if (k == 2) Master.mx.LAC <- Data.LT[Data.LT$Country=='LATIN AMERICA' & Data.LT$Source=='UN' &
+                                         Data.LT$Sex =='2' & Data.LT$Period=='2010-2015']
+  
+  if (k == 1) Master.CoD.LAC <- Master.CoD.MLAC
+  if (k == 2) Master.CoD.LAC <- Master.CoD.FLAC
+  
+  
+  
+  R1.1 <- Master.CoD.LAC
+  R2.1 <- Master.CoD
+  
+  
+  mx1 <- Master.mx.LAC$mx
+  mx2 <- Master.mx
+  Decomp.age <- AgeDecomp(mx1=mx1,mx2=mx2,Age=p1.data$Age,Sex=k)
+  print(sum(Decomp.age)-(e0.from.mx(mx2,p1.data$Age,k)-e0.from.mx(mx1,p1.data$Age,k)))
+  # calculate cause-specific contributions
+  Decomp.CoD <- Decomp.age*((R2.1*mx2)-(R1.1*mx1))/(mx2-mx1)
+  Decomp.CoD[is.infinite(Decomp.CoD)] <- 0
+  Decomp.CoD[is.na(Decomp.CoD)] <- 0
+  print(sum(Decomp.CoD)-sum(Decomp.age))
+  # Dataframe with decomposition results
+  Results         <- melt(Decomp.CoD,varnames = c('Age','Cause'),value.name = 'Contribution')
+  Results$Period1 <- '2010-2015'
+  Results$Age     <- rep(Master.mx.LAC$Age,14)
+  Results$Sex     <- k
+  Results$Country <- 9999
+  Results$Sources <- 'UN'
+  Results$e01     <- e0.from.mx(mx = mx1,Ages=p1.data$Age,Sex=k)
+  Results$e02     <- e0.from.mx(mx = mx2,Ages=p1.data$Age,Sex=k)
+  Decomp.comparision  <- rbind(Decomp.comparision,Results)
+}
+
+
+
+## Now code mortality from age 80 as 'Rest' since it is unreliable
+Decomp.comparision <- data.table(Decomp.comparision)
+Decomp.comparision[Decomp.comparision$Age >= 80]$Cause <- 15 
+Decomp.comparision <- Decomp.comparision[,list(Contribution=sum(Contribution)), by = list(Age,Cause,Period1,Sex,Country,Sources,e01,e02)]
+
+
+unique(Decomp.comparision$Country)
+
+cause.name.vec      <- c('Total', 'Infectious','Neoplasms', 'Circulatory','Abnormal', 'Mental',
+                         'Nervous','Endocrine','Digestive',
+                         'Genitourinary','Perinatal','Respiratory','External','Homicide','Rest')
+Decomp.comparision$Cause.name <- Decomp.comparision$Cause
+Decomp.comparision$Cause.name <- factor(Decomp.comparision$Cause.name, levels = 1:15, labels = cause.name.vec)
+
+Country.name.vec <- toupper(c('Cuba','Dominican Republic','Jamaica','Puerto Rico',
+                              'Trinidad and Tobago','Costa Rica','El Salvador','Guatemala',
+                              'Honduras','Mexico','Nicaragua','Panama','Argentina',
+                              'Chile','Colombia','Ecuador','Paraguay','Peru','Uruguay','Venezuela',
+                              'Haiti','Bolivia','Brazil', 'Latin America'))
+
+# Create a vector with the countries' codes according to WHO
+Country.code.vec <- c(2150,2170,2290,2380,2440,2140,2190,2250,2280,2310,
+                      2340,2350,2020,2120,2130,2180,2360,2370,2460,2470,2270,2060,2070,9999)
+names(Country.code.vec) <- Country.name.vec
+
+Decomp.comparision$Country.name <- Decomp.comparision$Country
+Decomp.comparision$Country.name <- factor(Decomp.comparision$Country.name, levels = Country.code.vec, 
+                                      labels = Country.name.vec)
+unique(Decomp.comparision$Country.name)
+Decomp.comparision <- Decomp.comparision
+
+Decomp.comparision[Decomp.comparision$Country.name=='PARAGUAY',]
+
+
+Decomp.comparision[Decomp.comparision$Period1 == '2010-2015']$Period1 <- '2010-2014'
+
+
+
+
+save(Decomp.comparision, file = 'Outcomes/Decomp_results_Europe.RData')
+save(Decomp.comparision, file = 'R/Decomp_App/Decomp_results_Europe.RData')
+save(Decomp.comparision, file = 'R/Decomp_Ranking_App/Decomp_results_Europe.RData')
+
+

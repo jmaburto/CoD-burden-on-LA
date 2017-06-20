@@ -19,6 +19,7 @@
 # 14 X85-Y09 Assault - homicide
 # 15 rest of causes
 
+
 library(data.table)
 library(reshape2)
 library(latticeExtra)
@@ -37,6 +38,7 @@ Deaths.data            <- Deaths.data[Deaths.data$Cause > 1,]
 Deaths.data            <- Deaths.data[Deaths.data$Age2 < 96]
 unique(Deaths.data$Age2)
 unique(Deaths.data$Cause.name)
+unique(Deaths.data$Country)
 ### First create same age groups as in the lifetable information, all sources used (UN, CEPAL and Lambda)
 ### CEPAL 2004 is 80+
 ### CEPAL 2010 is 100+
@@ -47,8 +49,11 @@ unique(Deaths.data$Cause.name)
 ##I am closing everything at 85+, after 85+ everything will be accumulated in cause of death 15
 ##for CEPAL2004, everything will close at 80+
 
+names(Country.code.vec) <- Country.name.vec
+
 DD <- Deaths.data
 unique(DD$Age)
+unique(DD$Age2)
 DD[DD$Age2>=80]$Age2 <- 80
 DD[DD$Age=="80 - 84" | DD$Age=="85 - 89"|DD$Age=='80-84'|DD$Age=="90 - 94" | DD$Age=="95+"]$Age <- "80+"
 
@@ -60,6 +65,7 @@ unique(CEPAL2004$Age)
 ## Now for the rest, lets close CoD data at 85
 DD <- Deaths.data
 unique(DD$Age)
+unique(DD$Age2)
 DD[DD$Age2>=85]$Age2 <- 85
 DD[DD$Age=="85 - 89"|DD$Age=='80-84'|DD$Age=="90 - 94" | DD$Age=="95+"]$Age <- "85+"
 
@@ -72,9 +78,11 @@ unique(Rest$Age)
 CEPAL2004$Source <- 'CEPAL2004'
 Rest$Source      <- 'Rest'
 
-Deaths.data <- rbind(CEPAL2004,Rest)
+#Deaths.data <- rbind(CEPAL2004,Rest)
 
 table(Deaths.data$Country,Deaths.data$Year)
+
+
 
 #### aggregate ages 1-4
 CEPAL2004[CEPAL2004$Age2 >= 1 & CEPAL2004$Age2 <= 4,]$Age2 <- 1
@@ -90,6 +98,6 @@ DD <- Rest[,list(Female=sum(Female)), by = list(X,Year,Cause,Age,Country,Age2,Ca
 DD$Male <- Rest[,list(Male=sum(Male)), by = list(X,Year,Cause,Age,Country,Age2,Cause.name,Source)]$Male
 Rest <- DD
 
-save(CEPAL2004,Rest,file = 'Outcomes/Harmonized_CoDData.RData')
+save(Deaths.data,CEPAL2004,Rest,file = 'Outcomes/Harmonized_CoDData.RData')
 
-gdata::keep(Rest,CEPAL2004,cause.name.vec,Country.code.vec,Country.name.vec,sure = T)
+gdata::keep(Deaths.data,Rest,CEPAL2004,cause.name.vec,Country.code.vec,Country.name.vec,sure = T)

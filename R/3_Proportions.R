@@ -23,7 +23,9 @@ library(data.table)
 library(reshape2)
 library(latticeExtra)
 
-setwd('C:/Users/jmaburto/Documents/GitHub/CoD-burden-on-LA')
+Your_working_directory <- 'C:/Users/jmaburto/Documents/GitHub/CoD-burden-on-LA'
+
+setwd(Your_working_directory)
 
 source('R/1_Get_All_Data.R')
 
@@ -107,12 +109,6 @@ f2
 pdf(file="Figures/Male_Prop.pdf",width=12,height=11,pointsize=12)
 print(f2)
 dev.off()
-
-
-
-
-
-
 
 
 

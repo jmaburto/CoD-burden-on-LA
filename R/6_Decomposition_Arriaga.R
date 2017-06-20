@@ -16,7 +16,7 @@ unique(Data.LT$Year)
 unique(CEPAL2004$Country)
 unique(Data.LT$Country)
 
-
+unique(Deaths.data[Deaths.data$Country == 'Venezuela']$Year)
 # Decomp CEPAL2004 --------------------------------------------------------
 
 
@@ -27,7 +27,7 @@ unique(Data.LT$Country)
 ### Mexico, Nicaragua, Argentina, Chile, Colombia, Ecuador, Paraguay,
 ### Peru, Uruguay, Venezuela, Brazil, Cuba
 
-names(Country.code.vec) <- Country.name.vec
+Country.code.vec
 
 CEPAL2004D <-   CEPAL2004[CEPAL2004$X == 2170|CEPAL2004$X == 2140|CEPAL2004$X == 2190|
                             CEPAL2004$X == 2250|CEPAL2004$X == 2310|CEPAL2004$X == 2340|
@@ -68,7 +68,7 @@ Countries <- unique(CEPAL2004D2$X)
 CEPAL2004D2$Period5 <- as.character(CEPAL2004D2$Period5)
 #k <- Sex[1]
 #l <-1
-#j <-2460
+#j <-2020
 ## Because everything is different and we need separate files for each country, I'll do this with loops
 Decomp.results <- NULL
 Lifetables     <- NULL
@@ -167,25 +167,25 @@ Decomp.results[Decomp.results$Sources=='CEPAL2004' & Decomp.results$Country==247
 ### Mexico, Nicaragua, Argentina, Chile, Colombia, Ecuador, Paraguay,
 ### Peru, Uruguay, Venezuela, Brazil, Cuba
 
-names(Country.code.vec) <- Country.name.vec
-
 CEPAL2010D <-   Rest[(Rest$X == 2170|Rest$X == 2140|Rest$X == 2190|
                       Rest$X == 2250|Rest$X == 2310|Rest$X == 2340|
                       Rest$X == 2020|Rest$X == 2120|Rest$X == 2130|
                       Rest$X == 2180|Rest$X == 2360|Rest$X == 2370|
-                      Rest$X == 2460|Rest$X == 2070|Rest$X == 2470|
+                      Rest$X == 2460|Rest$X == 2070|
                       Rest$X == 2150),]
 
 CEPAL2010LT <-            Data.LT[(Data.LT$Code == 2170|Data.LT$Code == 2140|Data.LT$Code == 2190|
                                      Data.LT$Code == 2250|Data.LT$Code == 2310|Data.LT$Code == 2340|
                                      Data.LT$Code == 2020|Data.LT$Code == 2120|Data.LT$Code == 2130|
                                      Data.LT$Code == 2180|Data.LT$Code == 2360|Data.LT$Code == 2370|
-                                     Data.LT$Code == 2460|Data.LT$Code == 2070|Data.LT$Code == 2470|
+                                     Data.LT$Code == 2460|Data.LT$Code == 2070|
                                      Data.LT$Code == 2150) & Data.LT$Source == 'CEPAL2010',]
 unique(CEPAL2010D$Country)
 unique(CEPAL2010LT$Country)
 unique(CEPAL2010LT$Year)
 unique(CEPAL2010D$Year)
+
+Country.code.vec
 
 ## Aggregate deaths in periods of 5 years to get more robust CoD decomp
 Periods      <- seq(1990,2010,5)
@@ -208,7 +208,7 @@ Countries <- unique(CEPAL2010D2$X)
 CEPAL2010D2$Period5 <- as.character(CEPAL2010D2$Period5)
 #k <- Sex[1]
 #l <-1
-#j <-2360
+#j <-2470
 ## Because everything is different and we need separate files for each country, I'll do this with loops
 
 for (j in Countries){
@@ -300,8 +300,8 @@ for (j in Countries){
 
 # Decomp UN ---------------------------------------------------------------
 
+unique(Data.LT[(Data.LT$Code == 2440) & Data.LT$Source == 'UN',]$Period)
 
-gdata::keep(CEPAL2004,cause.name.vec,Countries,Country.code.vec,Rest,Lifetables,Decomp.results,Rest,Data.LT,sure=T)
 source('R/Functions_LT.R')
 
 ### UN, be carefull because UN 2010 ends up lifetable at 85+
@@ -311,14 +311,14 @@ source('R/Functions_LT.R')
 ### Mexico, Nicaragua, Argentina, Chile, Colombia, Ecuador, Paraguay,
 ### Peru, Uruguay, Venezuela, Brazil, Cuba
 
-UND <-   Rest[(Rest$X == 2170|Rest$X == 2140|Rest$X == 2190|
+UND <-   Rest[(Rest$X == 2170|Rest$X == 2140|Rest$X == 2190|Rest$X == 2380|Rest$X == 2440|
                         Rest$X == 2250|Rest$X == 2310|Rest$X == 2340|
                         Rest$X == 2020|Rest$X == 2120|Rest$X == 2130|
                         Rest$X == 2180|Rest$X == 2360|Rest$X == 2370|
                         Rest$X == 2460|Rest$X == 2070|Rest$X == 2470|
                         Rest$X == 2150),]
 
-UNLT <-            Data.LT[(Data.LT$Code == 2170|Data.LT$Code == 2140|Data.LT$Code == 2190|
+UNLT <-            Data.LT[(Data.LT$Code == 2170|Data.LT$Code == 2140|Data.LT$Code == 2190|Data.LT$Code == 2380|Data.LT$Code == 2440|
                                      Data.LT$Code == 2250|Data.LT$Code == 2310|Data.LT$Code == 2340|
                                      Data.LT$Code == 2020|Data.LT$Code == 2120|Data.LT$Code == 2130|
                                      Data.LT$Code == 2180|Data.LT$Code == 2360|Data.LT$Code == 2370|
@@ -343,14 +343,17 @@ unique(UND2$Cause)
 table(UND2$Cause,UND2$Age)
 table(UNLT$Period,UNLT$Country)
 
-### Ok, we can perform decomp for CEPAL 2004
+### Ok, we can perform decomp for UN
 UNLT$Sex <- as.numeric(UNLT$Sex)
 Sex       <- unique(UNLT$Sex)
 Countries <- unique(UND2$X)
 UND2$Period5 <- as.character(UND2$Period5)
-#k <- Sex[1]
-#l <-1
-#j <-2360
+
+Country.code.vec
+#k <- 2
+#l <-3
+#j <-2170
+#j <-2150
 ## Because everything is different and we need separate files for each country, I'll do this with loops
 
 for (j in Countries){
@@ -385,6 +388,7 @@ for (j in Countries){
       if (rowSums(R2)[dim(R2)[1]]==0) R2[dim(R2)[1],dim(R2)[2]-1] <- 1
       R1.1 <- R1/rowSums(R1)
       R2.1 <- R2/rowSums(R2)
+      
       
       if (sum(rowSums(R1.1)) != 19) print('Dimension R1')
       if (sum(rowSums(R2.1)) != 19) print('Dimension R2')
@@ -431,12 +435,6 @@ for (j in Countries){
     
   }
 }
-
-
-
-
-
-
 
 
 
@@ -1122,7 +1120,13 @@ j <-2280
     
   }
   
-  unique(Decomp.results$Country)
+## Now code mortality from age 80 as 'Rest' since it is unreliable
+  Decomp.results <- data.table(Decomp.results)
+  Decomp.results[Decomp.results$Age >= 80]$Cause <- 15 
+  Decomp.results <- Decomp.results[,list(Contribution=sum(Contribution)), by = list(Age,Cause,Period1,Period2,Sex,Country,Sources,e01,e02)]
+  
+  
+unique(Decomp.results$Country)
 
 cause.name.vec      <- c('Total', 'Infectious','Neoplasms', 'Circulatory','Abnormal', 'Mental',
                     'Nervous','Endocrine','Digestive',
@@ -1147,7 +1151,24 @@ Decomp.results$Country.name <- factor(Decomp.results$Country.name, levels = Coun
 unique(Decomp.results$Country.name)
 Decomp_results <- Decomp.results
 
+unique(Decomp_results$Period1)
+unique(Decomp_results$Period2)
+
+Decomp_results[Decomp_results$Period1 == '1990-1995']$Period1 <- '1990-1994'
+Decomp_results[Decomp_results$Period1 == '1995-2000']$Period1 <- '1995-1999'
+Decomp_results[Decomp_results$Period1 == '2000-2005']$Period1 <- '2000-2004'
+Decomp_results[Decomp_results$Period1 == '2005-2010']$Period1 <- '2005-2009'
+
+Decomp_results[Decomp_results$Period2 == '1995-2000']$Period2 <- '1995-1999'
+Decomp_results[Decomp_results$Period2 == '2000-2005']$Period2 <- '2000-2004'
+Decomp_results[Decomp_results$Period2 == '2005-2010']$Period2 <- '2005-2009'
+Decomp_results[Decomp_results$Period2 == '2010-2015']$Period2 <- '2010-2014'
+
+
 Decomp_results[Decomp_results$Country.name=='PARAGUAY',]
+
+
+
 
 save(Decomp_results, file = 'Outcomes/Decomp_results.RData')
 save(Decomp_results, file = 'R/Decomp_App/Decomp_results.RData')

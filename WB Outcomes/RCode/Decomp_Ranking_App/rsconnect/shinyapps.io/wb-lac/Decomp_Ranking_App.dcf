@@ -1,0 +1,11 @@
+name: Decomp_Ranking_App
+title: Decomp_Ranking_App
+account: wb-lac
+server: shinyapps.io
+appId: 188320
+bundleId: 863925
+url: https://wb-lac.shinyapps.io/Decomp_Ranking_App/
+when: 1497296105.29572
+asMultiple: FALSE
+asStatic: FALSE
+ignoredFiles: Decomp_rank_Shiny_app.R
