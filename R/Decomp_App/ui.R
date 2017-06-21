@@ -13,6 +13,11 @@ library(DT)
   shinyUI(
     fluidPage(
       titlePanel('Decomposition of life expectancy'),
+      img(src='Logo.png', align = "right"),
+      navbarPage(
+        'Canudas-Romo, V. and Aburto, J.M. "Age- and Cause-Decomposition 
+        of the Difference in Life-Expectancy in Latin American and Caribbean Countries." World Bank, 2017.',
+        position = c("fixed-bottom")),
       sidebarLayout(
         sidebarPanel(
           selectInput( 'sexes','Sex',choices = list('FEMALES'=2,'MALES'=1), selected = 2),

@@ -3,9 +3,9 @@ title: CoD_App
 account: wb-lac
 server: shinyapps.io
 appId: 178191
-bundleId: 845648
+bundleId: 875025
 url: https://wb-lac.shinyapps.io/CoD_App/
-when: 1496152522.58323
+when: 1497957250.04037
 asMultiple: FALSE
 asStatic: FALSE
 ignoredFiles: CoD_Shiny_app.R

@@ -5,6 +5,11 @@ names.c <- c("AUSTRIA","BELGIUM","DENMARK","FINLAND","FRANCE","GERMANY","GREECE"
 shinyUI(
   fluidPage(
     titlePanel('Decomposition of a difference of life expectancy'),
+    img(src='Logo.png', align = "right"),
+    navbarPage(
+      'Canudas-Romo, V. and Aburto, J.M. "Age- and Cause-Decomposition 
+        of the Difference in Life-Expectancy in Latin American and Caribbean Countries." World Bank, 2017.',
+      position = c("fixed-bottom")),
     hr(),
     fluidRow(
      column(3, selectInput( 'countries','Country',names.c, selected = 'MEXICO')),
