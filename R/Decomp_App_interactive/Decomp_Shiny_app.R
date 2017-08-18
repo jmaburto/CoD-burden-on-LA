@@ -2,7 +2,7 @@
 # You'll need these packages to make things work, more from modern programming
 #install.packages(c("dplyr", "tidyr", "ggplot2", "shiny",'rsconnect'), dependencies=TRUE)
 
-setwd( "C:/Users/jmaburto/Documents/GitHub/CoD-burden-on-LA/R/Decomp_App")
+setwd( "C:/Users/jmaburto/Documents/GitHub/CoD-burden-on-LA/R/Decomp_App_interactive")
 #install.packages('shiny')
 #install.packages('ggplot2')
 #install.packages("data.table")
@@ -11,6 +11,7 @@ setwd( "C:/Users/jmaburto/Documents/GitHub/CoD-burden-on-LA/R/Decomp_App")
 
 library(shiny)
 library(ggplot2)
+library(plotly)
 #rsconnect::setAccountInfo(name='jmaburto',
 #                          token='7310E08D0D081D3C3CABCAA90D18045E',
 #                          secret='Vzlie6RN39/THGhWKatGf/C68yZp+RENdTdOl/ey')

@@ -1,7 +1,7 @@
 library(data.table)
 library(reshape2)
 
-setwd('C:/Users/jmaburto/Documents/GitHub Backup 2/CoD-burden-on-LA')
+setwd('C:/Users/jmaburto/Documents/GitHub/CoD-burden-on-LA')
 
 
 load('Data/Europe_Data.RData')

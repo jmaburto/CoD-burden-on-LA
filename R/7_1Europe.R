@@ -110,10 +110,11 @@ Deaths.data2$Male<- Deaths.data[,list(Male=sum(Male)), by = list(X,Year,Cause,Ag
 ### download information from HMD for the countries we are interested in
 ###Get HMD Data
 library(HMDHFDplus)
+
 XYZ <-c('AUT','BEL','DNK','FIN','FRATNP','DEUTNP','IRL','ITA','LUX','NLD','PRT','ESP','SWE','GBR_NP')
 
-us <- "username fromHMD"
-pw <- "Password"
+us <- "jmaburto@colmex.mx"
+pw <- "kolmogorov"
 HMDL <- do.call(rbind,lapply(XYZ, function(x, us, pw){
   cat(x,"\n")
   Males        <- readHMDweb(x,"mltper_5x5",username=us,password=pw,)

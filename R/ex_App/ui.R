@@ -1,5 +1,7 @@
 library(shiny)
 library(data.table)
+library(plotly)
+
 names.c <- toupper(sort(c('Argentina','Bolivia','Brazil','Chile','Colombia','Costa Rica','Cuba',
             'Dominican Republic','Ecuador','El Salvador','Guatemala','Haiti',
             'Honduras','Jamaica','Mexico','Nicaragua','Panama','Paraguay','Peru',
@@ -14,6 +16,6 @@ shinyUI(
       of the Difference in Life-Expectancy in Latin American and Caribbean Countries." World Bank, 2017.',
       position = c("fixed-bottom")),
     selectInput( 'name','Country',names.c, selected = 'Mexico'),
-  plotOutput('ex')
+    plotlyOutput('ex')
 ))
   

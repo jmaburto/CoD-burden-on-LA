@@ -7,13 +7,13 @@
 # 2 Certain infectious and parasitic diseases                           A00-B99
 # 3 Neoplasms                                                      C00-D48
 # 4 Diseases of the circulatory system                        I00-I99
-# 5 Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified                                                                             R00-R99
+# 5 Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified R00-R99
 # 6 Mental and behavioural disorders F01-F99
 # 7 Diseases of the nervous system            G00-G98
 # 8 Endocrine, nutritional and metabolic diseases                 E00-E88 
 # 9 Diseases of the digestive system K00-K92
 # 10 Diseases of the genitourinary system               N00-N98
-# 11 P00-P96          Certain conditions originating in the perinatal period & Q00-Q99                Congenital malformations, deformations and chromosomal abnormalities
+# 11 P00-P96          Certain conditions originating in the perinatal period & Q00-Q99Congenital malformations, deformations and chromosomal abnormalities
 # 12 Diseases of the respiratory system    J00-J98
 # 13 External causes of morbidity and mortality     V01-Y89 minus homicide
 # 14 X85-Y09 Assault - homicide
@@ -41,15 +41,17 @@ Country.code.vec <- c(2150,2170,2290,2380,2440,2140,2190,2250,2280,2310,
 
 #function to correct cuba subtotals
 Complete.cuba <- function(deaths){
-  s1 <- sum(deaths[2:15])
+  s1 <- sum(deaths[2:14])
   s2 <- deaths[1]
   deaths2 <- deaths
-  deaths2[15] <- deaths2[15]+(s2-s1)
+  deaths2[15] <- (s2-s1)
   deaths2
 }
 
 Deaths.data  <- NULL
 ICD10.year   <- NULL
+
+
 # Create a loop to find the year of change between ICD9 and ICD10 and create homogeneous datasets
 for (i in 1:length(Country.code.vec)){
   
@@ -104,10 +106,15 @@ for (i in 1:length(Country.code.vec)){
   
   if (i == 1) {Deaths.cuba1 <- data.table(Deaths.f)
   Deaths.cuba2 <- data.table(Deaths.m)
-    females <- Deaths.cuba1[,Complete.cuba(Female), by = list(Age2,Year)]
-    males   <- Deaths.cuba2[,Complete.cuba(Male), by = list(Age2,Year)]
-  Deaths.f$Female <- females$V1
-  Deaths.m$Male <- males$V1
+  Deaths.cuba1 <- Deaths.cuba1[with(Deaths.cuba1,order(Year,Age2,Cause)),]
+  Deaths.cuba2 <- Deaths.cuba2[with(Deaths.cuba1,order(Year,Age2,Cause)),]
+  
+    females  <- Deaths.cuba1[,Female:=Complete.cuba(Female), by = list(Age2,Year)]
+    males    <- Deaths.cuba2[,Male:=Complete.cuba(Male), by = list(Age2,Year)]
+    
+    
+  Deaths.f<- females
+  Deaths.m<- males
   }
   
   

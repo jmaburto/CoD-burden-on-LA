@@ -1,4 +1,4 @@
-setwd( "C:/Users/jmaburto/Documents/GitHub/CoD-burden-on-LA/R/Decomp_Ranking_App/")
+setwd( "C:/Users/jmaburto/Documents/GitHub Backup 2/CoD-burden-on-LA/R/Decomp_Ranking_App/")
 
 library(shiny)
 library(ggplot2)

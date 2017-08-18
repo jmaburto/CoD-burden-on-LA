@@ -24,9 +24,12 @@ e0.from.mx <-function(mx=mx,Ages=Age,Sex=Sex){
   Widths              <-  c(Widths, Widths[N - 1])
   ax                  <- mx * 0 + Widths/2
   ax[1]               <- AKm02a0(m0 = mx[1], sex = sex)
+  ax[i.openage] <- if (mx[i.openage] == 0) 0.5 else 1/mx[i.openage]
+  
   qx                  <- (Widths*mx) / (1 + (Widths - ax) * mx)
-  qx[i.openage]       <- 1
+  qx[i.openage]       <- ifelse(is.na(qx[i.openage]), NA, 1)
   qx[qx > 1] 	        <- 1
+  
   px 				          <- 1 - qx
   px[is.nan(px)]      <- 0
   lx 			            <- c(RADIX, RADIX * cumprod(px[1:OPENAGE]))[1:N]
@@ -48,13 +51,16 @@ LT.from.mx <- function(mx=mx,Ages=Age,Sex=Sex){
   if (Sex[1] == 2 ) {sex <- 'f'}
   Widths              <- diff(Ages)
   N                   <- length(mx)
+  
   RADIX               <- 1
   i.openage           <- length(mx)
   OPENAGE             <- i.openage - 1
   Widths              <-  c(Widths, Widths[N - 1])
   ax                  <- mx * 0 + Widths/2
   ax[1]               <- AKm02a0(m0 = mx[1], sex = sex)
+  ax[i.openage] <- if (mx[i.openage] == 0) 0.5 else 1/mx[i.openage]
   qx                  <- (Widths*mx) / (1 + (Widths - ax) * mx)
+  qx[i.openage]       <- ifelse(is.na(qx[i.openage]), NA, 1)
   qx[i.openage]       <- 1
   qx[qx > 1] 	        <- 1
   px 				          <- 1 - qx

@@ -1,7 +1,7 @@
 library(data.table)
 library(reshape2)
 
-setwd('C:/Users/jmaburto/Documents/GitHub Backup 2/CoD-burden-on-LA')
+setwd('C:/Users/jmaburto/Documents/GitHub/CoD-burden-on-LA')
 #source('R/7_1Europe.R')
 
 load('Data/Europe_Data.RData')
@@ -73,7 +73,7 @@ Decomp.comparision <- NULL
 
 UND <-   Rest[(Rest$X == 2170|Rest$X == 2140|Rest$X == 2190|Rest$X == 2380|Rest$X == 2440|
                  Rest$X == 2250|Rest$X == 2310|Rest$X == 2340|Rest$X == 2280|Rest$X == 2350|Rest$X == 2290|
-                 Rest$X == 2020|Rest$X == 2120|Rest$X == 2130|
+                 Rest$X == 2020|Rest$X == 2120|Rest$X == 2130|Rest$X == 2270|Rest$X == 2060|
                  Rest$X == 2180|Rest$X == 2360|Rest$X == 2370|
                  Rest$X == 2460|Rest$X == 2070|Rest$X == 2470|
                  Rest$X == 2150),]
@@ -84,7 +84,7 @@ UNLT <-            Data.LT[(Data.LT$Code == 2170|Data.LT$Code == 2140|Data.LT$Co
                               Data.LT$Code == 2020|Data.LT$Code == 2120|Data.LT$Code == 2130|
                               Data.LT$Code == 2180|Data.LT$Code == 2360|Data.LT$Code == 2370|
                               Data.LT$Code == 2460|Data.LT$Code == 2070|Data.LT$Code == 2470|
-                              Data.LT$Code == 2150) & Data.LT$Source == 'UN',]
+                              Data.LT$Code == 2150|Data.LT$Code == 2270|Data.LT$Code == 2060) & Data.LT$Source == 'UN',]
 unique(UND$Country)
 unique(UNLT$Country)
 unique(UNLT$Year)
@@ -124,7 +124,7 @@ UND2$Period5 <- as.character(UND2$Period5)
 
 #k <- 2
 #l <-3
-#j <-2280
+#j <-2270
 #j <-2290
 #j <-2350
 ## Because everything is different and we need separate files for each country, I'll do this with loops
