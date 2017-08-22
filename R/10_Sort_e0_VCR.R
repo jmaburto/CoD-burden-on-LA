@@ -2,8 +2,8 @@ library(dplyr)
 library(ggplot2)
 library(grid)
 
-Data<-"Q:/Grants/WB/Documents/Output/WB_OutcomesB/WB_Outcomes/RCode/ex_App"
-Folder<-"Q:/Articles/Latin America Mortality/Results"
+setwd("C:/Users/jmaburto/Desktop/Canudas-Romo,Aburto_2017/R/Letter_app")
+
 
 setwd(Data)
 
@@ -137,10 +137,9 @@ D<- data.frame(cbind(rbind(D1,D2),Sex))
     scale_color_discrete(name="Life expectancy at birth",labels=c("High","Medium high","Medium low","Low"))+
     scale_shape_manual(values = c(8, 16))+
     theme_bw()+
-  theme(
-    legend.position = c(.05, .99),
+  theme(legend.position = c(.05, .99),
     legend.justification = c("left", "top"),
-    legend.box.just = "left"
+    legend.box.just = "left")+
     theme(plot.margin=unit(c(1,0.5,1,0.5), "cm"))+
     geom_text(aes(x=13.7, y=51, label="1990"))+
     geom_text(aes(x=13.7, y=55, label="2014"))+
@@ -149,7 +148,7 @@ D<- data.frame(cbind(rbind(D1,D2),Sex))
              arrow=arrow(length=unit(0.20,"cm"), ends="last", type = "closed"))+
       coord_flip()
   
-  
+  save(D,D1,file = 'ex_fig_VCR.RData')
   setwd(Folder)
   Nm<-"e0.ps"
   dev.copy2eps(file=Nm)      
